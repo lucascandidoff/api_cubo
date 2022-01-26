@@ -33,6 +33,9 @@ def find_all(cnpj):
         print('--=--=-=-=-=-=-=-=-=-=')
         browser.close()
 
+    
+    return 
+
 
     # driver.get('https://www.crunchbase.com/v4/data/autocompletes?query=cortex-intelligence&collection_ids=organizations&limit=25')
 
@@ -60,8 +63,6 @@ def find_all(cnpj):
     #         name_company = company,name
 
     #         # return inf_company
-
-    return ""
 
 
 def getCrunchCompany(company):
