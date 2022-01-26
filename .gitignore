@@ -12,3 +12,5 @@ venv/
 
 # Visual Studio Code
 .vscode/
+
+chromedriver
