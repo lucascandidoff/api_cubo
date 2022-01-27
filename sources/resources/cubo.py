@@ -1,3 +1,4 @@
+from time import sleep
 from unicodedata import name
 from flask import Blueprint
 from sources.utils.response import Response
@@ -8,7 +9,7 @@ from bs4 import BeautifulSoup as bs
 # from selenium.webdriver.chrome.options import Options  
 # from selenium.webdriver.support.ui import Select
 import os
-from playwright.sync_api import sync_playwright as sp
+from playwright.sync_api import sync_playwright
 
 cubo_api = Blueprint('cubo', __name__)
 cubo_business = CuboBusiness()
@@ -24,17 +25,39 @@ header = { "Authorization" : "Basic aXRicm9rZXI6cmVrb3JidGkz" }
 @cubo_api.route('/getfullcnpj/<int:cnpj>', methods=['GET'], strict_slashes=False)
 def find_all(cnpj):
 
-    with sp() as p:
+    with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto("https://www.crunchbase.com/v4/data/autocompletes?query=cortex-intelligence&collection_ids=organizations&limit=25")
-        print('--=--=-=-=-=-=-=-=-=-=')
-        print(page.title())
-        print('--=--=-=-=-=-=-=-=-=-=')
+
+        verificacao = page.query_selector('.page-title').inner_text()        
+   
+        tentativas = 0;
+        
+        while(verificacao == "Please verify you are a human"):
+            print("Resolvendo captcha tentativas ", tentativas);
+            sleep(5);
+            page.screenshot(path='ss.png');
+            page.mouse.move(0, 0);
+            page.mouse.move(150, 240);
+            page.mouse.down();
+            sleep(1);
+            page.screenshot(path='ss2.png');
+            page.mouse.up();
+            sleep(5);
+            page.screenshot(path='ss3.png');
+            verificacao = page.query_selector('.page-title').inner_text()        
+
+            tentativas += 1
+
+            if tentativas > 2: 
+                page.close()
+                break
+
         browser.close()
 
     
-    return 
+    return "" 
 
 
     # driver.get('https://www.crunchbase.com/v4/data/autocompletes?query=cortex-intelligence&collection_ids=organizations&limit=25')
